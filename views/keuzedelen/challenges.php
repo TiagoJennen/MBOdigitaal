@@ -18,16 +18,25 @@
             <div class="flex border-b border-gray-300">
                 <button
                     class="w-1/2 py-4 text-center font-medium text-gray-700 bg-gray-100 rounded-tl-lg focus:outline-none active:bg-gray-200"
-                    onclick="openTab(event, 'tab1')">Case</button>
+                    onclick="openTab(event, 'tab1')">Basis programmeren van games</button>
                 <button
                     class="w-1/2 py-4 text-center font-medium text-gray-700 bg-gray-100 rounded-tl-lg focus:outline-none active:bg-gray-200"
-                    onclick="openTab(event, 'tab2')">Challenge 25</button>
+                    onclick="openTab(event, 'tab2')">Digitale vaardigheden gevorderd</button>
                 <button
                     class="w-1/2 py-4 text-center font-medium text-gray-700 bg-gray-100 rounded-tr-lg focus:outline-none active:bg-gray-200"
-                    onclick="openTab(event, 'tab3')">Challenge 26</button>
+                    onclick="openTab(event, 'tab3')">Fotografie basis</button>
                 <button
                     class="w-1/2 py-4 text-center font-medium text-gray-700 bg-gray-100 rounded-tr-lg focus:outline-none active:bg-gray-200"
-                    onclick="openTab(event, 'tab4')">Challenge 27</button>
+                    onclick="openTab(event, 'tab4')">Inspelen op innovaties</button>
+                    <button
+                    class="w-1/2 py-4 text-center font-medium text-gray-700 bg-gray-100 rounded-tl-lg focus:outline-none active:bg-gray-200"
+                    onclick="openTab(event, 'tab5')">Ondernemend gedrag</button>
+                <button
+                    class="w-1/2 py-4 text-center font-medium text-gray-700 bg-gray-100 rounded-tr-lg focus:outline-none active:bg-gray-200"
+                    onclick="openTab(event, 'tab6')">Oriëntatie op ondernemerschap</button>
+                <button
+                    class="w-1/2 py-4 text-center font-medium text-gray-700 bg-gray-100 rounded-tr-lg focus:outline-none active:bg-gray-200"
+                    onclick="openTab(event, 'tab7')">Verdieping software</button>
             </div>
             <div id="tab1" class="tabcontent p-4">
                 <?php require 'challenges-tab1.inc.php' ?>
@@ -40,6 +49,15 @@
             </div>
             <div id="tab4" class="tabcontent p-4 hidden">
                 <?php require 'challenges-tab4.inc.php' ?>
+            </div>
+            <div id="tab5" class="tabcontent p-4 hidden">
+                <?php require 'challenges-tab5.inc.php' ?>
+            </div>
+            <div id="tab6" class="tabcontent p-4 hidden">
+                <?php require 'challenges-tab6.inc.php' ?>
+            </div>
+            <div id="tab7" class="tabcontent p-4 hidden">
+                <?php require 'challenges-tab7.inc.php' ?>
             </div>
         </div>
 
