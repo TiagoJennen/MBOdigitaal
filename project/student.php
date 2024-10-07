@@ -1,11 +1,3 @@
-<?php
-$mysqli = new mysqli("localhost", "root", "", "keuzedelen_db");
-
-// Haal alle keuzedelen op uit de database
-$result = $mysqli->query("SELECT * FROM keuzedelen");
-
-?>
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
