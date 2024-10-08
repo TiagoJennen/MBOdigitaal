@@ -1,7 +1,10 @@
+<?php require '../views/templates/menu.php'; ?>
+<?php require '../views/templates/head.php'; ?>
+
 <?php
 
 $host = 'localhost';
-$dbName = 'mbogodigital';
+$dbName = 'mbodigital';
 $user = 'root';
 $password = 'Vista@123';
 
@@ -12,9 +15,10 @@ try {
     die("Fout bij verbinden met database: " . $e->getMessage());
 }
 
-$opleidingenQuery = $pdo->query('SELECT * FROM opleidingen');
-$keuzedelenQuery = $pdo->query('SELECT * FROM keuzedelen');
-$cohortenQuery = $pdo->query('SELECT * FROM cohorten');
+// Haal gegevens op uit de database
+$opleidingenQuery = $pdo->query('SELECT * FROM education');
+$keuzedelenQuery = $pdo->query('SELECT * FROM keuzedeel');
+$cohortenQuery = $pdo->query('SELECT * FROM groepen');
 ?>
 
 <!DOCTYPE html>
@@ -58,22 +62,24 @@ $cohortenQuery = $pdo->query('SELECT * FROM cohorten');
             <div class="filter">
                 <label>Selecteer een opleiding:</label><br>
                 <?php while ($opleiding = $opleidingenQuery->fetch(PDO::FETCH_ASSOC)): ?>
-                    <input type="checkbox" name="opleiding[]" value="<?= $opleiding['id']; ?>"> <?= htmlspecialchars($opleiding['naam']); ?><br>
+                    <input type="checkbox" name="opleiding[]" value="<?= $opleiding['id']; ?>"> 
+                    <?= isset($opleiding['name']) ? htmlspecialchars($opleiding['name']) : 'Onbekend'; ?><br>
                 <?php endwhile; ?>
             </div>
 
             <div class="filter">
                 <label>Selecteer een keuzedeel:</label><br>
                 <?php while ($keuzedeel = $keuzedelenQuery->fetch(PDO::FETCH_ASSOC)): ?>
-                    <input type="checkbox" name="keuzedeel[]" value="<?= $keuzedeel['id']; ?>"> <?= htmlspecialchars($keuzedeel['naam']); ?>
-                    <a href="keuzedeel_info.php?id=<?= $keuzedeel['id']; ?>">ℹ️</a><br>
+                    <input type="checkbox" name="keuzedeel[]" value="<?= $keuzedeel['id']; ?>"> 
+                    <?= isset($keuzedeel['title']) ? htmlspecialchars($keuzedeel['title']) : 'Onbekend'; ?><br>
                 <?php endwhile; ?>
             </div>
 
             <div class="filter">
                 <label>Selecteer een cohort:</label><br>
                 <?php while ($cohort = $cohortenQuery->fetch(PDO::FETCH_ASSOC)): ?>
-                    <input type="checkbox" name="cohort[]" value="<?= $cohort['id']; ?>"> <?= htmlspecialchars($cohort['jaar']); ?><br>
+                    <input type="checkbox" name="cohort[]" value="<?= $cohort['id']; ?>"> 
+                    <?= isset($cohort['name']) ? htmlspecialchars($cohort['name']) : 'Onbekend'; ?><br>
                 <?php endwhile; ?>
             </div>
 
@@ -83,5 +89,6 @@ $cohortenQuery = $pdo->query('SELECT * FROM cohorten');
             <button type="submit">Zoek</button>
         </form>
     </div>
+    <?php require '../views/templates/footer.php'; ?>
 </body>
 </html>
