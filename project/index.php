@@ -6,7 +6,7 @@
 $host = 'localhost';
 $dbName = 'mbodigital';
 $user = 'root';
-$password = '';
+$password = 'Vista@123';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbName", $user, $password);
