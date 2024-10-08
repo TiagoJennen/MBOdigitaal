@@ -6,7 +6,7 @@
 $host = 'localhost';
 $dbName = 'mbodigital';
 $user = 'root';
-$password = 'Vista@123';
+$password = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbName", $user, $password);
@@ -15,7 +15,6 @@ try {
     die("Fout bij verbinden met database: " . $e->getMessage());
 }
 
-// Haal gegevens op uit de database
 $opleidingenQuery = $pdo->query('SELECT * FROM education');
 $keuzedelenQuery = $pdo->query('SELECT * FROM keuzedeel');
 $cohortenQuery = $pdo->query('SELECT * FROM groepen');
