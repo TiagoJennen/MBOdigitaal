@@ -1,4 +1,6 @@
 <?php
+session_start(); // Start the session at the top
+
 $host = "127.0.0.1";
 $dbName = "mbodigital";
 $user = "mbogodigitalUser";
@@ -21,11 +23,15 @@ try {
 } catch (PDOException $e) {
     echo "Error fetching data: " . $e->getMessage();
 }
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Store selected keuzedeel IDs in session
     $_SESSION['selected_keuzedelen'] = $_POST['keuzedeel'] ?? [];
 }
+
+// Initialize selected keuzedelen from session
+$selectedKeuzedelen = $_SESSION['selected_keuzedelen'] ?? [];
 ?>
 
 <!DOCTYPE html>
@@ -36,52 +42,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Keuzedelen Overzicht</title>
     <?php require '../views/templates/head.php' ?>
     <link rel="stylesheet" href="student.css">
-  <script>
-    function moveToChosen(checkbox) {
-        const chosenContainer = document.getElementById('chosen-keuzedelen');
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    <script>
+        function moveToChosen(checkbox) {
+            const chosenContainer = document.getElementById('chosen-keuzedelen');
 
-        if (checkbox.checked) {
-            // Check if the limit is reached
-            if (checkboxes.length > 3) {
-                alert("Je kunt maximaal 3 keuzedelen selecteren.");
-                checkbox.checked = false; // Uncheck the checkbox
-                return; // Stop further execution
-            }
-
-            // Create a new list item
-            const listItem = document.createElement('p');
-            const infoButton = document.createElement('a'); // Create an anchor element for the button
-            infoButton.innerText = 'Informatie';
-            infoButton.href = 'your_link_here'; // Link to your page here
-            infoButton.className = 'info-btn'; // Apply the button class
-            listItem.innerHTML = checkbox.nextSibling.textContent; // Get the text for the selected keuzedeel
-            listItem.appendChild(infoButton); // Append the button to the list item
-            chosenContainer.appendChild(listItem); // Append the list item to the chosen container
-        } else {
-            // Remove the item if unchecked
-            const items = chosenContainer.getElementsByTagName('p');
-            for (let item of items) {
-                if (item.textContent.includes(checkbox.nextSibling.textContent)) {
-                    chosenContainer.removeChild(item);
-                    break;
+            if (checkbox.checked) {
+                // Create a new list item
+                const listItem = document.createElement('p');
+                const infoButton = document.createElement('a'); // Create an anchor element for the button
+                infoButton.innerText = 'Informatie';
+                infoButton.href = 'your_link_here'; // Link to your page here
+                infoButton.className = 'info-btn'; // Apply the button class
+                listItem.innerHTML = checkbox.nextSibling.textContent; // Get the text for the selected keuzedeel
+                listItem.appendChild(infoButton); // Append the button to the list item
+                chosenContainer.appendChild(listItem); // Append the list item to the chosen container
+            } else {
+                // Remove the item if unchecked
+                const items = chosenContainer.getElementsByTagName('p');
+                for (let item of items) {
+                    if (item.textContent.includes(checkbox.nextSibling.textContent)) {
+                        chosenContainer.removeChild(item);
+                        break;
+                    }
                 }
             }
         }
-    }
 
-    // Function to load previously selected keuzedelen on page load
-    window.onload = function() {
-        const selectedKeuzedelen = <?php echo json_encode($_SESSION['selected_keuzedelen'] ?? []); ?>;
-        selectedKeuzedelen.forEach(id => {
-            const checkbox = document.querySelector(`input[type='checkbox'][value='${id}']`);
-            if (checkbox) {
-                checkbox.checked = true;
-                moveToChosen(checkbox); // Move to chosen
-            }
-        });
-    }
-</script>
+        // Function to load previously selected keuzedelen on page load
+        window.onload = function() {
+            const selectedKeuzedelen = <?php echo json_encode($selectedKeuzedelen); ?>;
+            selectedKeuzedelen.forEach(id => {
+                const checkbox = document.querySelector(`input[type='checkbox'][value='${id}']`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    moveToChosen(checkbox); // Move to chosen
+                }
+            });
+        }
+    </script>
 </head>
 <body>
 <?php require '../views/templates/menu.php' ?>
@@ -94,8 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="middleBox">
         <h2>Gekozen keuzedelen</h2>
-        <div id="chosen-keuzedelen">
-        </div>
+        <div id="chosen-keuzedelen"></div>
         <div class="deadlinesLine"></div>
         <div class="deadlines">
             <p>Deadline: 25/09/2024</p>
@@ -114,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php
                 if (!empty($keuzedelen)) {
                     foreach ($keuzedelen as $keuzedeel) {
-                        $checked = in_array($keuzedeel['id'], $_SESSION['selected_keuzedelen'] ?? []) ? 'checked' : '';
+                        $checked = in_array($keuzedeel['id'], $selectedKeuzedelen) ? 'checked' : '';
                         echo "<p><label><input type='checkbox' name='keuzedeel[]' value='" . htmlspecialchars($keuzedeel['id']) . "' $checked onclick='moveToChosen(this)'>";
                         echo "" . htmlspecialchars($keuzedeel['code']) . " " . htmlspecialchars($keuzedeel['title']) . " </label></p>";
                     }
@@ -123,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 ?>
             </div>
-            <input type="submit" value="Opslaan" class="save" >
+            <input type="submit" value="Opslaan" class="save">
         </form>
     </div>
 </div>
