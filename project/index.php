@@ -1,8 +1,4 @@
-<?php require '../views/templates/menu.php'; ?>
-<?php require '../views/templates/head.php'; ?>
-
 <?php
-
 $host = "127.0.0.1";             
 $dbName = "mbodigital";               
 $user = "mbogodigitalUser";          
@@ -24,7 +20,8 @@ $cohortenQuery = $pdo->query('SELECT * FROM groepen');
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Keuzedelen</title>
+    <title>Selecteer Keuzedelen</title>
+    <?php require '../views/templates/head.php'; ?>
     <link rel="stylesheet" href="styles.css">
     <script>
         function validateForm() {
@@ -47,6 +44,7 @@ $cohortenQuery = $pdo->query('SELECT * FROM groepen');
     </script>
 </head>
 <body>
+<?php require '../views/templates/menu.php'; ?>
     <div class="container">
         <div class="search-student">
             <form action="zoek_student.php" method="GET">
@@ -59,33 +57,41 @@ $cohortenQuery = $pdo->query('SELECT * FROM groepen');
 
         <form action="resultaten.php" method="GET" onsubmit="return validateForm()">
             <div class="filter">
-                <label>Selecteer een opleiding:</label><br>
-                <?php while ($opleiding = $opleidingenQuery->fetch(PDO::FETCH_ASSOC)): ?>
-                    <input type="checkbox" name="opleiding[]" value="<?= $opleiding['id']; ?>"> 
-                    <?= isset($opleiding['name']) ? htmlspecialchars($opleiding['name']) : 'Onbekend'; ?><br>
-                <?php endwhile; ?>
+                <div class="label-container">
+                    <div class="label">
+                        <label>Selecteer een opleiding:</label><br>
+                        <?php while ($opleiding = $opleidingenQuery->fetch(PDO::FETCH_ASSOC)): ?>
+                            <input type="checkbox" name="opleiding[]" value="<?= $opleiding['id']; ?>"> 
+                            <?= isset($opleiding['name']) ? htmlspecialchars($opleiding['name']) : 'Onbekend'; ?><br>
+                        <?php endwhile; ?>
+                    </div>
+                    
+                    <div class="label">
+                        <label>Selecteer een keuzedeel:</label><br>
+                        <?php while ($keuzedeel = $keuzedelenQuery->fetch(PDO::FETCH_ASSOC)): ?>
+                            <input type="checkbox" name="keuzedeel[]" value="<?= $keuzedeel['id']; ?>"> 
+                            <?= isset($keuzedeel['title']) ? htmlspecialchars($keuzedeel['title']) : 'Onbekend'; ?><br>
+                        <?php endwhile; ?>
+                    </div>
+                    
+                    <div class="label">
+                        <label>Selecteer een cohort:</label><br>
+                        <?php while ($cohort = $cohortenQuery->fetch(PDO::FETCH_ASSOC)): ?>
+                            <input type="checkbox" name="cohort[]" value="<?= $cohort['id']; ?>"> 
+                            <?= isset($cohort['name']) ? htmlspecialchars($cohort['name']) : 'Onbekend'; ?><br>
+                        <?php endwhile; ?>
+                    </div>
+                </div>
             </div>
 
-            <div class="filter">
-                <label>Selecteer een keuzedeel:</label><br>
-                <?php while ($keuzedeel = $keuzedelenQuery->fetch(PDO::FETCH_ASSOC)): ?>
-                    <input type="checkbox" name="keuzedeel[]" value="<?= $keuzedeel['id']; ?>"> 
-                    <?= isset($keuzedeel['title']) ? htmlspecialchars($keuzedeel['title']) : 'Onbekend'; ?><br>
-                <?php endwhile; ?>
-            </div>
-
-            <div class="filter">
-                <label>Selecteer een cohort:</label><br>
-                <?php while ($cohort = $cohortenQuery->fetch(PDO::FETCH_ASSOC)): ?>
-                    <input type="checkbox" name="cohort[]" value="<?= $cohort['id']; ?>"> 
-                    <?= isset($cohort['name']) ? htmlspecialchars($cohort['name']) : 'Onbekend'; ?><br>
-                <?php endwhile; ?>
-            </div>
-
-            <div id="error-message" style="color: red; display: none;">
+            <div id="error-message" style="color: red; display: none; text-align: center; margin-top: 20px; font-size: 18px;">
                 U moet ten minste drie vakjes aanvinken.
             </div>
-            <button type="submit">Zoek</button>
+            <div class="search-button-container">
+                <button type="submit" style="padding: 12px 25px; background-color: #1D4ED8; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s;">
+                    Zoek
+                </button>
+            </div>
         </form>
     </div>
     <?php require '../views/templates/footer.php'; ?>
