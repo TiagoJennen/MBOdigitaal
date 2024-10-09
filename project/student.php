@@ -1,3 +1,33 @@
+<?php
+$host = "127.0.0.1";
+$dbName = "mbodigital";
+$user = "mbogodigitalUser";
+$password = "Vrieskist@247";
+
+try {
+    // Establish the database connection
+    $dsn = "mysql:host=$host;dbname=$dbName;charset=utf8mb4";
+    $pdo = new PDO($dsn, $user, $password);
+
+    // Set error mode to exceptions
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Prepare the SQL query to fetch keuzedeel records
+    $stmt = $pdo->prepare("SELECT id, code, title, sbu FROM keuzedeel ORDER BY title ASC");
+    $stmt->execute();
+
+    // Fetch the data
+    $keuzedelen = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching data: " . $e->getMessage();
+}
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Store selected keuzedeel IDs in session
+    $_SESSION['selected_keuzedelen'] = $_POST['keuzedeel'] ?? [];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -5,143 +35,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keuzedelen Overzicht</title>
     <?php require '../views/templates/head.php' ?>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <link rel="stylesheet" href="student.css">
+  <script>
+    function moveToChosen(checkbox) {
+        const chosenContainer = document.getElementById('chosen-keuzedelen');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+        if (checkbox.checked) {
+            // Check if the limit is reached
+            if (checkboxes.length > 3) {
+                alert("Je kunt maximaal 3 keuzedelen selecteren.");
+                checkbox.checked = false; // Uncheck the checkbox
+                return; // Stop further execution
+            }
+
+            // Create a new list item
+            const listItem = document.createElement('p');
+            const infoButton = document.createElement('a'); // Create an anchor element for the button
+            infoButton.innerText = 'Informatie';
+            infoButton.href = 'your_link_here'; // Link to your page here
+            infoButton.className = 'info-btn'; // Apply the button class
+            listItem.innerHTML = checkbox.nextSibling.textContent; // Get the text for the selected keuzedeel
+            listItem.appendChild(infoButton); // Append the button to the list item
+            chosenContainer.appendChild(listItem); // Append the list item to the chosen container
+        } else {
+            // Remove the item if unchecked
+            const items = chosenContainer.getElementsByTagName('p');
+            for (let item of items) {
+                if (item.textContent.includes(checkbox.nextSibling.textContent)) {
+                    chosenContainer.removeChild(item);
+                    break;
+                }
+            }
         }
-        .container {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-        }
-        .leftBox {
-            margin-left: -90px;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            width: 377;
-            height: 267px;
-            background-color: whitesmoke;
-        }
-        .middleBox {
-            margin-top: 320px;
-            margin-left: -645px;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            height: 307px;
-            width: 320px;
-            background-color: whitesmoke;
-        }
-        .rightBox {
-            padding: 20px;
-            width: 600px;
-        }
-        .leftBox h2 {
-            text-align: center;
-            font-size: larger;
-            font-weight: 500;
-            margin-bottom: 15px;
-        }
-        .leftBox p {
-            font-size: small;
-        }
-        .middleBox h2 {
-            text-align: center;
-            font-size: larger;
-            font-weight: 500;
-            margin-bottom: 15px;
-        }
-        .middleBox p {
-            font-size: small;
-            text-align: center;
-            margin-bottom: 2px;
-            margin-top: 5px;
-        }
-        .rightBox h2 {
-            font-size: 30PX;
-            font-weight: 500;
-            margin-top: 70px;
-            margin-left: -225px;
-        }
-        .rightBox p {
-            font-size: 20PX;
-            margin-bottom: 15px;
-            margin-left: -160px;
-        }
-        .rightBox strong {
-            font-size: 20PX;
-            margin-bottom: 15px;
-            margin-left: 50px;
-        }
-        .rightBox h3 {
-            font-size: 30PX;
-            font-weight: 500;
-            margin-bottom: 15px;
-            margin-left: -225px;
-        }
-        .exam-score {
-            font-size: 16px;
-            text-align: center;
-            color: white;
-            margin-left: 260px;
-            margin-top: -35px;
-            background-color: #007bff;
-            padding: 4px;
-            margin-right: 10px;
-            width: 30px;
-            height: 30px;
-        }
-        .course-list {
-            margin-top: 50px;
-            margin-left: -245px;
-            border-spacing: 40px;
-            padding-bottom: 1em;
-            font-size: large;
-        }
-        .course-list p{
-            margin-top: -25px;
-            margin-left: 40px;
-            margin-bottom: 30px;
-            font-size: large;
-        }
-        .course-list input {
-            margin-right: 10px;
-        }
-        .course-info {
-            margin-top: 10px;
-        }
-        .info-btn {
-            margin-left: 100px;  
-            margin-bottom: 2px;
-            font-size: 12px;                  
-            background-color: #007bff;
-            color: white;
-            padding: 0px 15px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-        }
-        .deadlines {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .deadlinesLine{
-            width: 340px;
-            margin-left: -30px;
-            margin-right: -30px;
-            margin-top: 20px;
-            height: 5px;
-            background-color: white;
-        }
-        .deadlines p {
-            margin: 5px 0;
-            font-weight: 600;
-        }
-    </style>
+    }
+
+    // Function to load previously selected keuzedelen on page load
+    window.onload = function() {
+        const selectedKeuzedelen = <?php echo json_encode($_SESSION['selected_keuzedelen'] ?? []); ?>;
+        selectedKeuzedelen.forEach(id => {
+            const checkbox = document.querySelector(`input[type='checkbox'][value='${id}']`);
+            if (checkbox) {
+                checkbox.checked = true;
+                moveToChosen(checkbox); // Move to chosen
+            }
+        });
+    }
+</script>
 </head>
 <body>
 <?php require '../views/templates/menu.php' ?>
@@ -154,14 +94,9 @@
 
     <div class="middleBox">
         <h2>Gekozen keuzedelen</h2>
-        <p>K0023 Digitale vaardigheden gevorderd (240 SBU)</p>
-        <button class="info-btn">Informatie</button>
-        <p>K0072 Ondernemend gedrag (240 SBU)</p>
-        <button class="info-btn">Informatie</button>
-        <p>K0505 Verdieping software (240 SBU)</p>
-        <button class="info-btn">Informatie</button>
-        <div class="deadlinesLine">
+        <div id="chosen-keuzedelen">
         </div>
+        <div class="deadlinesLine"></div>
         <div class="deadlines">
             <p>Deadline: 25/09/2024</p>
         </div>
@@ -174,18 +109,25 @@
         <p>Minimaal aantal SBU: <strong>720</strong></p>
 
         <h2>Selecteer keuzedelen</h2>
-        <div class="course-list">
-        <p><label><input type="checkbox"> &nbsp;&nbsp;&nbsp;K0788 Basis programmeren van games (240 SBU)</label></p>
-        <p><label><input type="checkbox" checked> &nbsp;&nbsp;&nbsp;K0023 Digitale vaardigheden gevorderd (240 SBU)</label></p>
-        <p><label><input type="checkbox"> &nbsp;&nbsp;&nbsp;K0495 Fotografie basis (240 SBU)</label><br></p>
-        <p><label><input type="checkbox"> &nbsp;&nbsp;&nbsp;K0226 Inspelen op innovaties (240 SBU)</label><br></p>
-        <p><label><input type="checkbox" checked> &nbsp;&nbsp;&nbsp;K0072 Ondernemend gedrag (240 SBU)</label><br></p>
-        <p><label><input type="checkbox"> &nbsp;&nbsp;&nbsp;K0800 Oriëntatie op ondernemerschap (240 SBU)</label><br></p>
-        <p><label><input type="checkbox" checked> &nbsp;&nbsp;&nbsp;K0505 Verdieping software (240 SBU)</label><br></p>
-        <p><label><input type="checkbox"> &nbsp;&nbsp;&nbsp;K0927 Praktijkonderzoek (480 SBU)</label></p>
-        </div>
+        <form method="post" action="">
+            <div class="course-list">
+                <?php
+                if (!empty($keuzedelen)) {
+                    foreach ($keuzedelen as $keuzedeel) {
+                        $checked = in_array($keuzedeel['id'], $_SESSION['selected_keuzedelen'] ?? []) ? 'checked' : '';
+                        echo "<p><label><input type='checkbox' name='keuzedeel[]' value='" . htmlspecialchars($keuzedeel['id']) . "' $checked onclick='moveToChosen(this)'>";
+                        echo "" . htmlspecialchars($keuzedeel['code']) . " " . htmlspecialchars($keuzedeel['title']) . " </label></p>";
+                    }
+                } else {
+                    echo "<p>Geen keuzedelen beschikbaar.</p>";
+                }
+                ?>
+            </div>
+            <input type="submit" value="Opslaan" class="save" >
+        </form>
     </div>
 </div>
-    <?php require '../views/templates/footer.php' ?>
+
+<?php require '../views/templates/footer.php' ?>
 </body>
 </html>
