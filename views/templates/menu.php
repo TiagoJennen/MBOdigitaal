@@ -28,7 +28,7 @@
                 </li>
                 <li
                     class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-blue-100 hover:text-blue-500 duration-200 cursor-pointer">
-                    <a href="/mentor/index.php">mentor</a>
+                    <a href="/project/mentor.php">mentor</a>
                     
                 </li>
                 <li
