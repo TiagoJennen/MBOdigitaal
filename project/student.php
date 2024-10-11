@@ -51,7 +51,7 @@ $selectedKeuzedelen = $_SESSION['selected_keuzedelen'] ?? [];
                 const listItem = document.createElement('p');
                 const infoButton = document.createElement('a'); // Create an anchor element for the button
                 infoButton.innerText = 'Informatie';
-                infoButton.href = 'your_link_here'; // Link to your page here
+                infoButton.href = 'info.php'; // Link to your page here
                 infoButton.className = 'info-btn'; // Apply the button class
                 listItem.innerHTML = checkbox.nextSibling.textContent; // Get the text for the selected keuzedeel
                 listItem.appendChild(infoButton); // Append the button to the list item
