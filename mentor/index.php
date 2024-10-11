@@ -37,7 +37,7 @@ $result = $conn->query($sql);
             <div class="col-md-3">
                 <div class="student-info text-center">
                     <img src="student-photo.jpg" class="rounded-circle img-fluid" alt="Student Photo">
-                    <p><strong>NAAM:</strong> john pork</p>
+                    <p><strong>NAAM:</strong> john doe</p>
                     <p><strong>OPLEIDING:</strong> Software developer</p>
                     <p><strong>KLAS:</strong>T1l.S42SenD </p>
                 </div>
@@ -45,7 +45,7 @@ $result = $conn->query($sql);
 
             <!-- Dynamic Dashboard Information -->
             <div class="col-md-9">
-                <h2 class="mb-3">John pork</h2>
+                <h2 class="mb-3">John doe</h2>
                 <p class="text-danger">Student heeft nog geen keuzedeel gekozen.</p>
 
                 <!-- Table with student status -->
