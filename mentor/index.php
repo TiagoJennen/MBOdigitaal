@@ -11,6 +11,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentor Dashboard</title>
+    <?php require '../views/templates/head.php' ?>
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -24,6 +25,7 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
+    <?php require '../views/templates/menu.php' ?>
     <div class="container">
         <!-- Header -->
         <div class="header text-center mb-4">
