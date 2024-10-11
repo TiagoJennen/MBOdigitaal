@@ -2,7 +2,7 @@
 $servername = "localhost";  // Change if MySQL server is remote
 $username = "root";         // Your MySQL username
 $password = "";             // Your MySQL password
-$dbname = "mentor_dashboard";  // The database you created
+$dbname = "mbodigital";  // The database you created
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
