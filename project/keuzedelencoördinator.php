@@ -7,7 +7,7 @@
     <?php require '../views/templates/head.php'; ?>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: ''text-lg font-bold text-gray-800'';
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
