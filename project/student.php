@@ -14,14 +14,30 @@ try {
     // Set error mode to exceptions
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // Fetch user education information
+    $stmt = $pdo->prepare("
+        SELECT u.firstName, u.prefix, u.lastName, e.name as education
+        FROM user u
+        JOIN education e ON u.educationId = e.id
+        WHERE u.id = ?
+    ");
+    $stmt->execute([$_SESSION['user_id']]); // Use the logged-in user ID
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Check if student data was fetched
+    if (!$student) {
+        echo "No student data found for the logged-in user.";
+        exit();
+    }
+
     // Prepare the SQL query to fetch keuzedeel records
-    $stmt = $pdo->prepare("SELECT id, code, title, sbu FROM keuzedeel ORDER BY title ASC");
+    $stmt = $pdo->prepare("SELECT id, code, title FROM keuzedeel ORDER BY title ASC");
     $stmt->execute();
 
-    // Fetch the data
+    // Fetch the keuzedeel data
     $keuzedelen = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "Error fetching data: " . $e->getMessage();
+    die("Error fetching data: " . $e->getMessage());
 }
 
 // Handle form submission
@@ -101,8 +117,8 @@ $selectedKeuzedelen = $_SESSION['selected_keuzedelen'] ?? [];
 
     <div class="rightBox">
         <h3>Overzicht keuzedelen</h3>
-        <p>Student: <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abdiraman Elmi</strong></p>
-        <p>Opleiding: <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Software Development</strong></p>
+        <p>Student: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><?php echo htmlspecialchars($student['firstName'] . ' ' . ($student['prefix'] ?? '') . ' ' . $student['lastName']); ?></strong></p>
+        <p>Opleiding: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><?php echo htmlspecialchars($student['education']); ?></strong></p>
         <p>Minimaal aantal SBU: <strong>720</strong></p>
 
         <h2>Selecteer keuzedelen</h2>
