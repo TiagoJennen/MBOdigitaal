@@ -5,9 +5,9 @@
 html, body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Voorkom horizontale scrollbalk */
+    overflow-x: hidden; 
     font-family: 'Arial', sans-serif;
-    background-color: #ffffff;
+    background-color: #ffffff; 
     color: #333;
     display: flex;
     flex-direction: column;
@@ -22,8 +22,10 @@ html, body {
     align-items: center;
     padding: 30px;
     background-color: #ffffff;
-    border-radius: 10px;
+    border-radius: 10px;    
     width: 100%;
+    max-width: 800px; 
+    margin: 20px auto; 
 }
 
 .search-student {
@@ -41,6 +43,12 @@ html, body {
     border-radius: 5px;
     font-size: 16px;
     box-sizing: border-box;
+    transition: border 0.3s; 
+}
+
+.search-student input[type="text"]:focus {
+    border-color: #1D4ED8; 
+    outline: none; 
 }
 
 .search-student button {
@@ -61,34 +69,30 @@ html, body {
 
 h2 {
     color: #000000;
-    border-bottom: 2px solid #000000;
+    border-bottom: 2px solid #1D4ED8; 
     padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .filter {
     margin-bottom: 20px;
-}
-
-.label-container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between; 
-    flex-wrap: nowrap; 
     width: 100%;
-    gap: 100px; 
 }
 
 .label {
-    width: 45%; 
-    margin-bottom: 20px;
+    flex: 1 1 30%;
+    margin: 10px; 
+}
+
+.label label {
+    font-weight: bold;
 }
 
 .label input[type="checkbox"] {
     margin-right: 10px; 
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 20px; 
 }
 
 button[type="submit"] {

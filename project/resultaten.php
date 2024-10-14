@@ -1,53 +1,146 @@
 <?php
-// Foutmeldingen weergeven
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// Databaseverbinding
+// Database configuratie
 $host = "127.0.0.1";
 $dbName = "mbodigital";
 $user = "mbogodigitalUser";
 $password = "Vrieskist@247";
 
 try {
+    // Maak verbinding met de database
     $pdo = new PDO("mysql:host=$host;dbname=$dbName", $user, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+    die("Fout bij verbinden met database: " . $e->getMessage());
 }
 
-// Voorbeeld variabelen (vervang deze door de waarden van je formulier)
-$opleidingen = "'6c93a885-9c11-4746-af76-b4b79ed3f1d0', '6e606817-054b-4752-b801-0459dd8c2789'"; // Vul hier je opleiding ID's in
-$keuzedelen = "'03b9ae14-c7ff-447b-a009-aa365bc1ee8f', 'k0788'"; // Vul hier je keuzedeel ID's in
-$cohorten = "'2021', '2022'"; // Vul hier je cohort jaren in
+// Ontvang de waarden van de checkboxen
+$opleidingen = $_GET['opleiding'] ?? [];
+$keuzedelen = $_GET['keuzedeel'] ?? [];
+$cohorten = $_GET['cohort'] ?? [];
 
-// SQL-query
-$sql = "
-    SELECT student.id AS student_id, keuzedeel.title AS keuzedeel_naam, groepen.cohort AS jaar 
-    FROM student
-    JOIN student_keuzedeel ON student.id = student_keuzedeel.student_id
-    JOIN keuzedeel ON student_keuzedeel.keuzedeel_id = keuzedeel.id
-    JOIN groepen ON groepen.id = student.duoNumber
-    WHERE student.id IN (SELECT id FROM education WHERE id IN ($opleidingen)) 
-    AND keuzedeel.id IN ($keuzedelen)
-    AND groepen.cohort IN ($cohorten)
-";
+// Controleer of er geselecteerde waarden zijn
+if (empty($opleidingen) || empty($keuzedelen) || empty($cohorten)) {
+    echo "<p>U moet ten minste één opleiding, keuzedeel en cohort selecteren.</p>";
+    exit;
+}
+
+// Query om de resultaten op te halen op basis van de geselecteerde checkboxen
+$query = "SELECT r.*, 
+          e.name AS opleiding_naam, 
+          k.title AS keuzedeel_titel, 
+          g.name AS cohort_naam, 
+          s.naam AS student_naam 
+          FROM resultaten r
+          JOIN education e ON r.education_id = e.id
+          JOIN keuzedeel k ON r.keuzedeel_id = k.id
+          JOIN groepen g ON r.groepen_id = g.id
+          JOIN student s ON r.student_id = s.id 
+          WHERE e.id IN (" . implode(',', array_map('intval', $opleidingen)) . ")
+          AND k.id IN (" . implode(',', array_map('intval', $keuzedelen)) . ")
+          AND g.id IN (" . implode(',', array_map('intval', $cohorten)) . ")";
 
 try {
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    if ($result) {
-        // Verwerk de resultaten
-        foreach ($result as $row) {
-            echo "Student ID: " . htmlspecialchars($row['student_id']) . " - Keuzedeel: " . htmlspecialchars($row['keuzedeel_naam']) . " - Jaar: " . htmlspecialchars($row['jaar']) . "<br>";
-        }
-    } else {
-        echo "Geen resultaten gevonden.";
-    }
+    $results = $pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    die("Fout bij het ophalen van resultaten: " . $e->getMessage());
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultaten</title>
+    <?php require '../views/templates/head.php'; ?>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <?php require '../views/templates/menu.php'; ?>
+    <div class="container">
+        <h2>Resultaten</h2>
+
+        <?php if (count($results) > 0): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Opleiding</th>
+                        <th>Keuzedeel</th>
+                        <th>Cohort</th>
+                        <th>Student</th>
+                        <th>Score</th>
+                        <th>Datum</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($results as $result): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($result['opleiding_naam']) ?></td>
+                            <td><?= htmlspecialchars($result['keuzedeel_titel']) ?></td>
+                            <td><?= htmlspecialchars($result['cohort_naam']) ?></td>
+                            <td><?= htmlspecialchars($result['student_naam']) ?></td>
+                            <td><?= htmlspecialchars($result['score']) ?></td>
+                            <td><?= htmlspecialchars($result['datum']) ?></td>
+                            <td><a href="details.php?id=<?= htmlspecialchars($result['id']) ?>">Bekijk Details</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Geen resultaten gevonden voor de geselecteerde criteria.</p>
+        <?php endif; ?>
+    </div>
+    <?php require '../views/templates/footer.php'; ?>
+</body>
+</html>
