@@ -144,6 +144,9 @@ body {
   margin-left: -5px;
   display: inline-block; 
 }
+.info-btn:hover{
+  background-color: #0266d1;
+}
 .save{
   background-color: #007bff; 
   color: white;
@@ -155,4 +158,22 @@ body {
   margin-top: -155px; 
   margin-left: -200px;
   display: inline-block; 
+}
+.save:hover{
+  background-color: #0266d1;
+}
+.logout-btn{
+  position: relative;
+  bottom: 40px;
+  left: 600px;
+  background-color: #f44336; 
+  color: white; 
+  padding: 10px 15px; 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
+}
+
+.logout-btn:hover{
+  background-color: #d32f2f; 
 }

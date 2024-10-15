@@ -123,8 +123,8 @@ $selectedKeuzedelen = $_SESSION['selected_keuzedelen'] ?? [];
 
         <div class="rightBox">
             <h3>Overzicht keuzedelen</h3>
-            <p>Student: <strong><?php echo htmlspecialchars($student['firstName'] . ' ' . ($student['prefix'] ?? '') . ' ' . $student['lastName']); ?></strong></p>
-            <p>Opleiding: <strong><?php echo htmlspecialchars($student['education']); ?></strong></p>
+            <p>Student: <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($student['firstName'] . ' ' . ($student['prefix'] ?? '') . ' ' . $student['lastName']); ?></strong></p>
+            <p>Opleiding: <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo htmlspecialchars($student['education']); ?></strong></p>
             <p>Minimaal aantal SBU: <strong>720</strong></p>
 
             <h2>Selecteer keuzedelen</h2>
