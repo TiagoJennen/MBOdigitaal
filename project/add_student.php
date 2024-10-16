@@ -1,13 +1,6 @@
 <?php
 session_start();
 
-// Controleer of de gebruiker is ingelogd (je kunt hier je eigen logica gebruiken)
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php"); // Redirect naar de inlogpagina als niet ingelogd
-    exit();
-}
-
-// Databaseverbinding
 $host = "127.0.0.1";             
 $dbName = "mbodigital";               
 $user = "mbogodigitalUser";          
@@ -20,15 +13,12 @@ try {
     die("Fout bij verbinden met database: " . $e->getMessage());
 }
 
-// Haal alle keuzedelen op
 $keuzedelenQuery = $pdo->query("SELECT * FROM keuzedeel");
 $keuzedelen = $keuzedelenQuery->fetchAll(PDO::FETCH_ASSOC);
 
-// Haal opleidingen op
 $opleidingenQuery = $pdo->query("SELECT * FROM opleiding");
 $opleidingen = $opleidingenQuery->fetchAll(PDO::FETCH_ASSOC);
 
-// Haal cohorten op
 $cohortenQuery = $pdo->query("SELECT * FROM cohort");
 $cohorten = $cohortenQuery->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -74,7 +64,6 @@ $cohorten = $cohortenQuery->fetchAll(PDO::FETCH_ASSOC);
     </form>
 
     <?php
-    // Verwerk het formulier
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $voornaam = $_POST['voornaam'];
         $achternaam = $_POST['achternaam'];
@@ -82,16 +71,13 @@ $cohorten = $cohortenQuery->fetchAll(PDO::FETCH_ASSOC);
         $keuzedelen = isset($_POST['keuzedelen']) ? $_POST['keuzedelen'] : [];
         $cohortId = $_POST['cohort_id'];
 
-        // Voeg de student toe
         $insertStudent = $pdo->prepare("INSERT INTO student (voornaam, achternaam, cohort_id) VALUES (:voornaam, :achternaam, :cohort_id)");
         $insertStudent->execute(['voornaam' => $voornaam, 'achternaam' => $achternaam, 'cohort_id' => $cohortId]);
-        $studentId = $pdo->lastInsertId(); // Verkrijg het ID van de nieuwe student
+        $studentId = $pdo->lastInsertId(); 
 
-        // Koppel de student aan de opleiding
         $insertOpleiding = $pdo->prepare("INSERT INTO studenten_opleidingen (student_id, opleiding_id) VALUES (:student_id, :opleiding_id)");
         $insertOpleiding->execute(['student_id' => $studentId, 'opleiding_id' => $opleidingId]);
 
-        // Koppel de student aan de keuzedelen
         foreach ($keuzedelen as $keuzedeelId) {
             $insertKeuzedeel = $pdo->prepare("INSERT INTO student_keuzedeel (student_id, keuzedeel_id) VALUES (:student_id, :keuzedeel_id)");
             $insertKeuzedeel->execute(['student_id' => $studentId, 'keuzedeel_id' => $keuzedeelId]);
