@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session at the top
+session_start(); // Start the session at the top hi
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
