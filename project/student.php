@@ -230,8 +230,9 @@ $selectedKeuzedelen = $_SESSION['selected_keuzedelen'] ?? $selectedKeuzedelen;
             </form>
         </div>
         <?php else: ?>
-        <p>Je bent niet ingelogd. <a href="/views/admin/auth/login2.php">Log in</a>.</p>
+        <p>Je bent niet ingelogd. <a href="/views/admin/auth/login2.php"><ins>Log in</ins></a>.</p>
     <?php endif; ?>
 </div>
+<?php require '../views/templates/footer.php'; ?>
 </body>
 </html>
